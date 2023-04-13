@@ -1,2 +1,4 @@
-package player;public class CPUPlayer {
+package player;
+
+public class CPUPlayer {
 }
