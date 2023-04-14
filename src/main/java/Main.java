@@ -1,25 +1,46 @@
+import player.CPUPlayer;
+import player.HumanPlayer;
+import player.Player;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    Game game = new Game();
+    private final List<String> opponentMenuOptions = Arrays.asList("player", "computer", "quit");
+    private final List<String> mainMenuOptions = Arrays.asList("play", "history", "quit");
+    private final Scanner input = new Scanner(System.in);
+    private Game game = new Game();
     private boolean givenValidMenuInput;
     private int validMenuResponse;
-    private final List<String> opponentMenuOptions = Arrays.asList("player", "computer","quit");
-    private final List<String> mainMenuOptions = Arrays.asList("play", "history", "quit");
 
     public static void main(String[] args) {
         Main mainGame = new Main();
-        System.out.println("Welcome to Rock, Paper, Scissors!\n");
-        mainGame.printOpponentMenu();
-        while (mainGame.validMenuResponse != 2){
-            mainGame.validMenuResponse=2;
-        }
-        mainGame.printMainMenu();
+        mainGame.playGame();
     }
 
-    public void printOpponentMenu(){
+    public void playGame() {
+        System.out.println("Welcome to Rock, Paper, Scissors!\n");
+        addHumanPlayer();
+        printOpponentMenu();
+        selectedOpponent();
+        while (validMenuResponse != 2) {
+            printMainMenu();
+
+        }
+    }
+
+    public void addHumanPlayer() {
+        System.out.println("Hello Player " + ((int) game.getNumberOfPlayers() + 1) + ". What is your name: ");
+        String playerInputStr = input.nextLine();
+        playerInputStr = playerInputStr.replaceAll("\\s", "");
+        playerInputStr = playerInputStr.replaceAll("\\\\", "");
+        Player newPlayer = new HumanPlayer();
+        newPlayer.setPlayerName(playerInputStr);
+        game.addPlayer(newPlayer);
+    }
+
+    public void printOpponentMenu() {
         givenValidMenuInput = false;
         validMenuResponse = 2;
         while (!givenValidMenuInput) {
@@ -32,11 +53,21 @@ public class Main {
         }
     }
 
-    public void selectOpponent(){
-        switch (validMenuResponse){
-
+    public void selectedOpponent() {
+        switch (validMenuResponse) {
+            case 0:
+                System.out.println("Your oppenent will be another player");
+                addHumanPlayer();
+                break;
+            case 1:
+                System.out.println("Your opponent will be a computer.");
+                game.addPlayer(new CPUPlayer());
+                break;
+            default:
+                break;
         }
     }
+
     public void printMainMenu() {
         givenValidMenuInput = false;
         validMenuResponse = 2;
@@ -51,15 +82,13 @@ public class Main {
     }
 
     public int getMenuInput(List<String> menu) {
-        Scanner menuInput = new Scanner(System.in);
-        String menuInputStr = menuInput.nextLine();
-        menuInput.close();
+        String menuInputStr = input.nextLine();
         menuInputStr = menuInputStr.replaceAll("\\s", "").toLowerCase();
+        System.out.println("\n\n");
         if (menu.contains(menuInputStr)) {
             givenValidMenuInput = true;
             return menu.indexOf(menuInputStr);
-        }
-        else{
+        } else {
             System.out.println("Invalid input. Please provide valid response.");
             return 2;
         }
