@@ -11,7 +11,7 @@ public class Choices {
         CHOICES.put(2,"Scissors");
     }
 
-    public Map<Integer,String> getChoices(){
-        return CHOICES;
+    public String getWeapon(int choiceID){
+        return CHOICES.get(choiceID);
     }
 }
