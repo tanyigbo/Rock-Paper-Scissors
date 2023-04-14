@@ -14,7 +14,7 @@ public class Main {
         System.out.println("Welcome to Rock, Paper, Scissors!\n");
         mainGame.printOpponentMenu();
         while (mainGame.validMenuResponse != 2){
-
+            mainGame.validMenuResponse=2;
         }
         mainGame.printMainMenu();
     }
