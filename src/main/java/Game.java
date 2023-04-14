@@ -1,16 +1,17 @@
 import player.Player;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Game {
 
-    private static List<String> player0GameOptions = Arrays.asList("Win", "Lose");
-    private static List<String> player1GameOptions = Arrays.asList("Lose", "Win");
+    private static final List<String> player0GameOptions = Arrays.asList("Win", "Lose");
+    private static final List<String> player1GameOptions = Arrays.asList("Lose", "Win");
     boolean hasBothPlayers;
-    private List<Player> players;
-    private Choices playerWeaponOptions = new Choices();
+    private List<Player> players = new ArrayList<>();
+    private final Choices playerWeaponOptions = new Choices();
 
     public Game() {
         hasBothPlayers = false;
@@ -31,7 +32,7 @@ public class Game {
     }
 
     public void checkHasTwoPlayers() {
-        hasBothPlayers = players.size() == 2 ? true : false;
+        hasBothPlayers = players.size() == 2;
         if (hasBothPlayers) {
             checkPlayerNameCollision();
         }
@@ -66,14 +67,11 @@ public class Game {
      * @return the winner of the round or 2 if it is a draw
      */
     public int determineWinner(int input0, int input1) {
-        switch (input0 - input1) {
-            case -2, 1:
-                return 0;
-            case -1, 2:
-                return 1;
-            default:
-                return 2;
-        }
+        return switch (input0 - input1) {
+            case -2, 1 -> 0;
+            case -1, 2 -> 1;
+            default -> 2;
+        };
     }
 
     public void updatePlayerRecord(int player0Choice, int player1Choice, int winner) {
