@@ -31,19 +31,20 @@ public class Game {
         return null;
     }
 
-    public void checkHasTwoPlayers() {
-        hasBothPlayers = players.size() == 2;
-        if (hasBothPlayers) {
-            checkPlayerNameCollision();
-        }
+    public int getNumberOfPlayers(){
+        return players.size();
     }
 
-    public void checkPlayerNameCollision() {
-        if (players.get(0).getPlayerName().equals(players.get(1).getPlayerName())) {
-            hasBothPlayers = false;
-            players.remove(1);
-        }
+    public void checkHasTwoPlayers() {
+        hasBothPlayers = players.size() == 2;
     }
+
+//    public void checkPlayerNameCollision() {
+//        if (players.get(0).getPlayerName().equals(players.get(1).getPlayerName())) {
+//            hasBothPlayers = false;
+//            players.remove(1);
+//        }
+//    }
 
     public int playRound() {
         int player0Choice = players.get(0).chooseWeapon();
