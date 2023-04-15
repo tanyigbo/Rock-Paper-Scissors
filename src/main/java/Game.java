@@ -1,3 +1,4 @@
+import player.PlayerChoices;
 import player.Player;
 
 import java.time.LocalDateTime;
@@ -5,13 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Game {
+public class Game implements PlayerChoices {
 
-    private static final List<String> player0GameOptions = Arrays.asList("Win", "Lose");
-    private static final List<String> player1GameOptions = Arrays.asList("Lose", "Win");
+    private static final List<String> playerEndGameResult = Arrays.asList("Win", "Lose", "Draw");
     boolean hasBothPlayers;
     private List<Player> players = new ArrayList<>();
-    private final Choices playerWeaponOptions = new Choices();
 
     public Game() {
         hasBothPlayers = false;
@@ -24,14 +23,7 @@ public class Game {
         }
     }
 
-    public Player getPlayer(int playerID) {
-        if (playerID > -1 && playerID < players.size()) {
-            return players.get(playerID);
-        }
-        return null;
-    }
-
-    public int getNumberOfPlayers(){
+    public int getNumberOfPlayers() {
         return players.size();
     }
 
@@ -39,22 +31,15 @@ public class Game {
         hasBothPlayers = players.size() == 2;
     }
 
-//    public void checkPlayerNameCollision() {
-//        if (players.get(0).getPlayerName().equals(players.get(1).getPlayerName())) {
-//            hasBothPlayers = false;
-//            players.remove(1);
-//        }
-//    }
-
     public int playRound() {
-        int player0Choice = players.get(0).chooseWeapon();
-        int player1Choice = players.get(1).chooseWeapon();
-        if (player0Choice < 3 && player1Choice < 3) {
-            int roundResult = determineWinner(player0Choice, player1Choice);
-            updatePlayerRecord(player0Choice, player1Choice, roundResult);
-            return 1;
-        } else {
+        int player0Selection = players.get(0).chooseWeapon();
+        int player1Selection = players.get(1).chooseWeapon();
+        if (player0Selection < 3 && player1Selection < 3) {
+            int roundResult = determineWinner(player0Selection, player1Selection);
+            updatePlayerRecord(player0Selection, roundResult);
             return 0;
+        } else {
+            return 2;
         }
     }
 
@@ -75,17 +60,16 @@ public class Game {
         };
     }
 
-    public void updatePlayerRecord(int player0Choice, int player1Choice, int winner) {
+    public void updatePlayerRecord(int player0Selection, int winner) {
         String gameTimeStamp = LocalDateTime.now().toString();
         players.get(0).addGameToHistory(
                 gameTimeStamp,
                 players.get(1).getPlayerName(),
-                player0GameOptions.get(winner),
-                playerWeaponOptions.getWeapon(player0Choice));
-        players.get(1).addGameToHistory(
-                gameTimeStamp,
-                players.get(0).getPlayerName(),
-                player1GameOptions.get(winner),
-                playerWeaponOptions.getWeapon(player1Choice));
+                playerEndGameResult.get(winner),
+                playerChoices.get(player0Selection));
+    }
+
+    public List<List<String>> getPlayerHistory(){
+        return players.get(0).getGameHistory();
     }
 }
