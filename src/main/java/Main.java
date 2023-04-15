@@ -1,31 +1,31 @@
-import player.CPUPlayer;
-import player.HumanPlayer;
-import player.Player;
+import player.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class Main implements PlayerChoices, ScannerInput {
     private final List<String> opponentMenuOptions = Arrays.asList("player", "computer", "quit");
     private final List<String> mainMenuOptions = Arrays.asList("play", "history", "quit");
-    private final Scanner input = new Scanner(System.in);
+//    private final Scanner input = new Scanner(System.in);
     private Game game = new Game();
     private boolean givenValidMenuInput;
     private int validMenuResponse;
 
     public static void main(String[] args) {
         Main mainGame = new Main();
-        mainGame.playGame();
+        mainGame.startGame();
+        input.close();
     }
 
-    public void playGame() {
+    public void startGame() {
         System.out.println("Welcome to Rock, Paper, Scissors!\n");
         addHumanPlayer();
         printOpponentMenu();
-        selectedOpponent();
+        opponentSelected();
         while (validMenuResponse != 2) {
             printMainMenu();
+            mainMenuSelected();
 
         }
     }
@@ -35,25 +35,23 @@ public class Main {
         String playerInputStr = input.nextLine();
         playerInputStr = playerInputStr.replaceAll("\\s", "");
         playerInputStr = playerInputStr.replaceAll("\\\\", "");
-        Player newPlayer = new HumanPlayer();
-        newPlayer.setPlayerName(playerInputStr);
+        Player newPlayer = new HumanPlayer(playerInputStr);
         game.addPlayer(newPlayer);
     }
 
     public void printOpponentMenu() {
         givenValidMenuInput = false;
-        validMenuResponse = 2;
         while (!givenValidMenuInput) {
             System.out.println("Choose your opponent");
             System.out.println("=====");
             System.out.println("1. Type 'player' for player vs player.");
             System.out.println("2. Type 'computer' for player vs computer.");
             System.out.println("3. Type 'quit' to stop playing.\n");
-            validMenuResponse = getMenuInput(opponentMenuOptions);
+            getMenuInput(opponentMenuOptions);
         }
     }
 
-    public void selectedOpponent() {
+    public void opponentSelected() {
         switch (validMenuResponse) {
             case 0:
                 System.out.println("Your oppenent will be another player");
@@ -70,27 +68,51 @@ public class Main {
 
     public void printMainMenu() {
         givenValidMenuInput = false;
-        validMenuResponse = 2;
         while (!givenValidMenuInput) {
             System.out.println("MAIN MENU");
             System.out.println("=====");
             System.out.println("1. Type 'play' to play.");
             System.out.println("2. Type 'history' to view your game history.");
             System.out.println("3. Type 'quit' to stop playing.\n");
-            validMenuResponse = getMenuInput(mainMenuOptions);
+            getMenuInput(mainMenuOptions);
         }
     }
 
-    public int getMenuInput(List<String> menu) {
+    public void getMenuInput(List<String> menu) {
         String menuInputStr = input.nextLine();
         menuInputStr = menuInputStr.replaceAll("\\s", "").toLowerCase();
         System.out.println("\n\n");
         if (menu.contains(menuInputStr)) {
             givenValidMenuInput = true;
-            return menu.indexOf(menuInputStr);
+            validMenuResponse = menu.indexOf(menuInputStr);
         } else {
             System.out.println("Invalid input. Please provide valid response.");
-            return 2;
+            validMenuResponse = 2;
+        }
+    }
+
+    public void mainMenuSelected(){
+        switch (validMenuResponse){
+            case 0:
+                validMenuResponse = game.playRound();
+                break;
+            case 1:
+                displayPlayerHistory();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void displayPlayerHistory(){
+        List<List<String>> gameHistory = game.getPlayerHistory();
+        System.out.println("Game History");
+        for(List<String> game : gameHistory){
+            System.out.println("Timestamp: " + game.get(0));
+            System.out.println("Opponnent: " + game.get(1));
+            System.out.println("Result: " + game.get(2));
+            System.out.println("Choice: " + game.get(3));
+            System.out.println("\n");
         }
     }
 }
