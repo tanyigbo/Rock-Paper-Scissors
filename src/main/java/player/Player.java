@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class Player {
+
     private String playerName;
     private String relativeSaveLocation;
     private int winCount;
