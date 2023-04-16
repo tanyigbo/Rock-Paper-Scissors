@@ -1,6 +1,7 @@
 import player.PlayerChoices;
 import player.Player;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ public class Game implements PlayerChoices {
         int player1Selection = players.get(1).chooseWeapon();
         if (player0Selection < 3 && player1Selection < 3) {
             int roundResult = determineWinner(player0Selection, player1Selection);
+            printGameResults(player0Selection, player1Selection, roundResult);
             updatePlayerRecord(player0Selection, roundResult);
             return 0;
         } else {
@@ -60,8 +62,21 @@ public class Game implements PlayerChoices {
         };
     }
 
+    public void printGameResults(int input0, int input1, int winner) {
+        System.out.println(players.get(0).getPlayerName() + " chose " + playerChoices.get(input0));
+        System.out.println(players.get(1).getPlayerName() + " chose " + playerChoices.get(input1));
+        if(winner ==2){
+            System.out.println("The round ends in a draw.\n");
+        }
+        else{
+            System.out.println(players.get(winner).getPlayerName() + " wins.\n");
+        }
+
+    }
+
+
     public void updatePlayerRecord(int player0Selection, int winner) {
-        String gameTimeStamp = LocalDateTime.now().toString();
+        String gameTimeStamp = LocalDateTime.now().withNano(0).toString();
         players.get(0).addGameToHistory(
                 gameTimeStamp,
                 players.get(1).getPlayerName(),
@@ -69,7 +84,45 @@ public class Game implements PlayerChoices {
                 playerChoices.get(player0Selection));
     }
 
-    public List<List<String>> getPlayerHistory(){
+    public List<List<String>> getPlayerHistory() {
         return players.get(0).getGameHistory();
+    }
+
+    public void importGameHistory() {
+        Player player = players.get(0);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(
+                    player.getRelativeSaveLocation()));
+            try {
+                String currentLine = reader.readLine();
+                while (currentLine != null) {
+                    List<String> data = Arrays.stream(currentLine.split(" ")).toList();
+                    player.importGame(data);
+                    currentLine = reader.readLine();
+                }
+                reader.close();
+            }
+            catch (IOException ex){
+                System.out.println(ex.getMessage());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Welcome fresh meat.");
+        }
+    }
+
+    public void exportGameHistory() {
+        Player player = players.get(0);
+        try{
+            FileWriter fileWriter = new FileWriter(player.getRelativeSaveLocation(),false);
+            BufferedWriter writer = new BufferedWriter(fileWriter);
+            for(List<String> game: player.getGameHistory()){
+                String gameOutput = String.join(" ", game) + "\n";
+                writer.write(gameOutput);
+            }
+            writer.close();
+        }
+        catch (IOException e){
+            System.out.println("Could not save your game history.");
+        }
     }
 }

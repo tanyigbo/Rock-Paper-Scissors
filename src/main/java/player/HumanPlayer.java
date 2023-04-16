@@ -1,7 +1,5 @@
 package player;
 
-import java.util.Scanner;
-
 public class HumanPlayer extends Player implements PlayerChoices,ScannerInput {
 
     private boolean givenValidResponse;
@@ -29,12 +27,12 @@ public class HumanPlayer extends Player implements PlayerChoices,ScannerInput {
             givenValidResponse = true;
             usersChoice = 9;
         }
-        if(playerChoices.contains(userInput)){
+        else if(playerChoices.contains(userInput)){
             givenValidResponse = true;
             usersChoice = playerChoices.indexOf(userInput);
         }
         else {
-            System.out.println("\n Please input a valid response.");
+            System.out.println("\nPlease input a valid response.\n");
         }
     }
 

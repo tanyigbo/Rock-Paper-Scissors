@@ -8,8 +8,6 @@ public abstract class Player {
 
     private String playerName;
     private String relativeSaveLocation;
-    private int winCount;
-    private int loseCount;
     private List<List<String>> gameHistory = new ArrayList<>();
 
     public String getPlayerName() {
@@ -18,43 +16,25 @@ public abstract class Player {
 
     public void setPlayerName(String name) {
         this.playerName = name;
-        this.relativeSaveLocation = name + ".txt";
+        this.relativeSaveLocation = "src/main/java/resources/" + name + ".txt";
     }
 
     public String getRelativeSaveLocation() {
         return relativeSaveLocation;
     }
 
-    public int getWinCount() {
-        return winCount;
-    }
-
-    private void addWin() {
-        winCount++;
-    }
-
-    public int getLoseCount() {
-        return loseCount;
-    }
-
-    private void addLose() {
-        loseCount++;
+    public void importGame(List<String> game) {
+        gameHistory.add(game);
     }
 
     public void addGameToHistory(String dateTime, String opponent, String roundResult, String weapon) {
         List<String> gameData = Arrays.asList(dateTime, opponent, roundResult, weapon);
         gameHistory.add(gameData);
-        if (roundResult.equals("Win")) {
-            addWin();
-        } else {
-            addLose();
-        }
     }
 
     public List<List<String>> getGameHistory() {
         return gameHistory;
     }
-
 
     public abstract int chooseWeapon();
 }

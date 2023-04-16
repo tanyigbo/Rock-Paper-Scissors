@@ -2,12 +2,10 @@ import player.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class Main implements PlayerChoices, ScannerInput {
     private final List<String> opponentMenuOptions = Arrays.asList("player", "computer", "quit");
     private final List<String> mainMenuOptions = Arrays.asList("play", "history", "quit");
-//    private final Scanner input = new Scanner(System.in);
     private Game game = new Game();
     private boolean givenValidMenuInput;
     private int validMenuResponse;
@@ -21,13 +19,15 @@ public class Main implements PlayerChoices, ScannerInput {
     public void startGame() {
         System.out.println("Welcome to Rock, Paper, Scissors!\n");
         addHumanPlayer();
+        game.importGameHistory();
         printOpponentMenu();
         opponentSelected();
         while (validMenuResponse != 2) {
             printMainMenu();
             mainMenuSelected();
-
         }
+        game.exportGameHistory();
+        System.out.println("Thanks for playing.");
     }
 
     public void addHumanPlayer() {
@@ -37,6 +37,7 @@ public class Main implements PlayerChoices, ScannerInput {
         playerInputStr = playerInputStr.replaceAll("\\\\", "");
         Player newPlayer = new HumanPlayer(playerInputStr);
         game.addPlayer(newPlayer);
+        System.out.println("\nWelcome " + newPlayer.getPlayerName());
     }
 
     public void printOpponentMenu() {
@@ -46,7 +47,7 @@ public class Main implements PlayerChoices, ScannerInput {
             System.out.println("=====");
             System.out.println("1. Type 'player' for player vs player.");
             System.out.println("2. Type 'computer' for player vs computer.");
-            System.out.println("3. Type 'quit' to stop playing.\n");
+            System.out.println("3. Type 'quit' to stop playing.");
             getMenuInput(opponentMenuOptions);
         }
     }
@@ -73,7 +74,7 @@ public class Main implements PlayerChoices, ScannerInput {
             System.out.println("=====");
             System.out.println("1. Type 'play' to play.");
             System.out.println("2. Type 'history' to view your game history.");
-            System.out.println("3. Type 'quit' to stop playing.\n");
+            System.out.println("3. Type 'quit' to stop playing.");
             getMenuInput(mainMenuOptions);
         }
     }
@@ -81,7 +82,7 @@ public class Main implements PlayerChoices, ScannerInput {
     public void getMenuInput(List<String> menu) {
         String menuInputStr = input.nextLine();
         menuInputStr = menuInputStr.replaceAll("\\s", "").toLowerCase();
-        System.out.println("\n\n");
+        System.out.println("");
         if (menu.contains(menuInputStr)) {
             givenValidMenuInput = true;
             validMenuResponse = menu.indexOf(menuInputStr);
@@ -91,8 +92,8 @@ public class Main implements PlayerChoices, ScannerInput {
         }
     }
 
-    public void mainMenuSelected(){
-        switch (validMenuResponse){
+    public void mainMenuSelected() {
+        switch (validMenuResponse) {
             case 0:
                 validMenuResponse = game.playRound();
                 break;
@@ -104,15 +105,20 @@ public class Main implements PlayerChoices, ScannerInput {
         }
     }
 
-    public void displayPlayerHistory(){
+    public void displayPlayerHistory() {
         List<List<String>> gameHistory = game.getPlayerHistory();
         System.out.println("Game History");
-        for(List<String> game : gameHistory){
-            System.out.println("Timestamp: " + game.get(0));
-            System.out.println("Opponnent: " + game.get(1));
-            System.out.println("Result: " + game.get(2));
-            System.out.println("Choice: " + game.get(3));
-            System.out.println("\n");
+        if (gameHistory.size() == 0) {
+            System.out.println("No games recorded\n");
+        }
+        else {
+            for (List<String> game : gameHistory) {
+                System.out.println("Timestamp: " + game.get(0));
+                System.out.println("Opponnent: " + game.get(1));
+                System.out.println("Result: " + game.get(2));
+                System.out.println("Choice: " + game.get(3));
+                System.out.println("");
+            }
         }
     }
 }
